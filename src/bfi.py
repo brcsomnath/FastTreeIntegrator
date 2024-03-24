@@ -2,6 +2,7 @@
 import numpy as np
 from scipy.sparse import csr_matrix
 from sklearn.model_selection import *
+from scipy.sparse.csgraph import floyd_warshall
 
 from gfi import *
 

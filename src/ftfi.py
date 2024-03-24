@@ -6,6 +6,7 @@ from collections import deque
 from sklearn.model_selection import *
 
 from gfi import GraphIntegrator
+from bfi import BruteForceGraphIntegrator
 
 
 
@@ -382,6 +383,7 @@ def kruskal_algo(graph_adj_lists):
   ds.makeSet(N)
   index = 0
   edges = []
+  
   for i in range(len(graph_adj_lists)):
     for j in range(len(graph_adj_lists[i])):
       if graph_adj_lists[i][j][0] < i:

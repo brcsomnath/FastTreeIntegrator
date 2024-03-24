@@ -3,6 +3,7 @@
 
 import time
 import torch
+import argparse
 import numpy as np
 
 
@@ -13,8 +14,22 @@ from sklearn.ensemble import RandomForestClassifier
 from torch_geometric.datasets import TUDataset
 
 
-from ftfi import *
+from bfi import BruteForceGraphIntegrator
+from ftfi import TreeBasedGraphIntegrator
+from ftfi import MinimumSpanningTreeConstructor
 
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--dataset",
+                    default="MUTAG",
+                    type=str,
+                    help="Dataset name.")
+parser.add_argument('--baseline', 
+                    action='store_true')
+parser.set_defaults(baseline=False)
+
+args = parser.parse_args()
 
 # -
 
@@ -26,13 +41,11 @@ def create_edge_lists(data, edge_weights=False, node_sim=False):
   
   for i in range(data.num_nodes):
     sublist = []
-  # collect indices
+    # collect indices
     indices = (data.edge_index == i).nonzero(as_tuple=False)
-    # print(indices)
     edge_ends_idx = indices[:,1][torch.where(indices[:,0]==0)]
-    # print(edge_ends_idx)
     edge_ends = data.edge_index[1][edge_ends_idx]
-    # print(edge_ends)
+
     if (edge_weights is False) and (node_sim is False):
       for j in edge_ends :
         sublist.append([j.item(), 1.0])
@@ -81,20 +94,11 @@ def create_graph_feats(data,k_vals,func, choose_from, edge_weights=False, node_s
     return left_eigs, right_eigs
 
 
-class NCIFilter(object):
-    def __call__(self, data):
-        return True
-        return data.num_nodes >= 5
 
 
 # +
-dataset_name = 'REDDIT-BINARY'
-
-
-if dataset_name == 'NCI1':
-    dataset = TUDataset(root='../data/TUDataset', name=dataset_name, pre_filter=NCIFilter())
-else:
-    dataset = TUDataset(root='../data/TUDataset', name=dataset_name)
+dataset = TUDataset(root='../data/TUDataset', 
+                    name=args.dataset)
 
 # +
 # Graph Classification
@@ -106,7 +110,7 @@ labels = [np.array(data.y) for data in dataset]
 # best hyperparameters
 rf_depths = [25]
 eigs = [5]
-threshold = 50
+threshold = 20
 seeds = [1, 2, 3, 4, 5]
 
 for num_eig in eigs :
@@ -117,17 +121,17 @@ for num_eig in eigs :
 
   start = time.time()
   for i, g in (enumerate(dataset)):
-    try :
+    # try :
       all_feats.append(create_graph_feats(g, num_eig, 
                                           lambda x: x, 'left', 
                                           edge_weights=False, 
                                           node_sim=False, 
                                           symmetrize=True, 
                                           threshold=threshold, 
-                                          baseline=False)[0])
-    except:
-      print(i)
-      bad_idx.append(i)
+                                          baseline=args.baseline)[0])
+    # except:
+    #   print(i)
+    #   bad_idx.append(i)
   print(f'Feature construction time: {time.time() - start}')
 
   # needed to deal with small graphs to make sure we have the same length arrays
@@ -157,5 +161,3 @@ for num_eig in eigs :
         all_acc.append(accu_stratified)
         print('\nOverall Accuracy:', mean(accu_stratified)*100, '%')
         print('\nStandard Deviation is:', stdev(accu_stratified))
-
-  print("*"*100)
