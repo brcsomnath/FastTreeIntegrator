@@ -96,7 +96,6 @@ def create_graph_feats(data,k_vals,func, choose_from, edge_weights=False, node_s
 
 
 
-# +
 dataset = TUDataset(root='../data/TUDataset', 
                     name=args.dataset)
 
@@ -109,8 +108,8 @@ labels = [np.array(data.y) for data in dataset]
 
 # best hyperparameters
 rf_depths = [25]
-eigs = [5]
-threshold = 20
+eigs = [40]
+threshold = 40
 seeds = [1, 2, 3, 4, 5]
 
 for num_eig in eigs :
@@ -121,7 +120,7 @@ for num_eig in eigs :
 
   start = time.time()
   for i, g in (enumerate(dataset)):
-    # try :
+    try :
       all_feats.append(create_graph_feats(g, num_eig, 
                                           lambda x: x, 'left', 
                                           edge_weights=False, 
@@ -129,9 +128,8 @@ for num_eig in eigs :
                                           symmetrize=True, 
                                           threshold=threshold, 
                                           baseline=args.baseline)[0])
-    # except:
-    #   print(i)
-    #   bad_idx.append(i)
+    except:
+      bad_idx.append(i)
   print(f'Feature construction time: {time.time() - start}')
 
   # needed to deal with small graphs to make sure we have the same length arrays
