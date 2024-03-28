@@ -44,3 +44,7 @@ The dataset names used to run the above command is presented below:
  'REDDIT-MULTI-5K', 
  'REDDIT-MULTI-12K']
 ```
+
+## Visualizations
+
+We provide additional results and visualization of FTFI in several experimental settings in `visualizations/` folder. 
