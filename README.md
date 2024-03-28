@@ -45,6 +45,17 @@ The dataset names used to run the above command is presented below:
  'REDDIT-MULTI-12K']
 ```
 
+## Vertex Normal Prediction
+
+To run FTFI for vertex normal prediction on meshes, first set the ```meshgraph_path```, which is the input folder that stores mesh data, then use the following command:
+
+```
+cd src/
+python vertex_normal_prediction.py
+```
+
+
+
 ## Visualizations
 
 We provide additional results and visualization of FTFI in several experimental settings in `visualizations/` folder. 
