@@ -1,6 +1,6 @@
 # Fast Tree-Field Integrators
 
-This repository provides the implementation of the ICML submission titled "*Fast Tree-Field Integrators:
+This repository provides the implementation of the NeurIPS submission titled "*Fast Tree-Field Integrators:
 From Low Displacement Rank to Topological Transformers*".
 
 ## Overview
